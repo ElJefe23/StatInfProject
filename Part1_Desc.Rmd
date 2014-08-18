@@ -1,0 +1,52 @@
+---
+title: "StatInfProject"
+author: "Jeff Wolbach"
+date: "Sunday, August 17, 2014"
+output: html_document
+---
+
+The exponential distribution was investigated by simulating 1500, 40-member samples from an exponential distribution with a mean of 5 and a variance of 5.  The mean of each 40-member sample was calculated and the behavior of the mean across all 1500 samples was compared to a normal distribution as a proof of the central limit theorem.
+```{r}
+longdata=numeric(length=1500)
+for (i in 1:1500) { longdata[i]=mean(rexp(40,0.2))}
+mld<-mean(longdata)
+sdld<-sd(longdata)
+```
+The distribution of the means of each sample is described in the following histogram.
+
+```{r, echo=FALSE}
+hist(longdata)
+abline(v=mean(longdata),col="red",lwd=3)
+abline(v=5.0,col="blue",lwd=3)
+```
+
+The average of the calculated sample means (`r mld`) is represented in the histogram as a vertical red line, and the true population mean (5.000) is represented in the histogram as a vertical blue line.
+
+The calculated variance of the sample mean was `r sdld`.  This can be compared to a theoretical variance of (1/lambda)/sqrt(number of samples=40) = 5/sqrt(40)= 0.791.
+
+As proof of the normality of the distribution of the sample means, we can calculate the fraction of the sample means that differ from the average of the sample means by specific fractions of the variance of the sample means.
+
+```{r}
+norm_comp=matrix(nrow=5,ncol=2)
+for (j in 1:5) { 
+  norm_comp[j,1]<- mean(longdata < (mld - (j*0.5)*sdld))
+  norm_comp[j,2]<- mean((mld + (j*0.5)*sdld) < longdata)
+}
+```
+
+
+Where the first column of norm_comp represents values below the average of the sample means (to the left), and the second column represents values above the average of the sample means (to the right).  For a normal distribution the two elements of each row should be equal, or the distribution should be symmetric about the center.
+```{r}
+norm_comp
+```
+
+The coverage of the confidence interval for (1/lambda) is calculated
+
+```{r}
+ul<-mean(longdata)+1.96*sd(longdata)
+ll<-mean(longdata)-1.96*sd(longdata)
+cover<-mean(ll<longdata & ul>longdata)
+cover
+```
+
+This result is very close to the theoretical coverage of 95% (or, 0.95), assuming a normal distribution.
