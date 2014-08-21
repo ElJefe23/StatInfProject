@@ -1,0 +1,78 @@
+---
+title: "Part2_Description"
+author: "Jeff Wolbach"
+date: "Wednesday, August 20, 2014"
+output: pdf_document
+---
+
+The second part of this project utilizes a stored dataset, ToothGrowth.  A short summary of ToothGrowth follows:
+
+```{r}
+data(ToothGrowth)
+summary(ToothGrowth)
+```
+```{r}
+head(ToothGrowth,3)
+```
+
+The data contained in ToothGrowth are the length of each tooth(len), the supplement used to encourage tooth growth(supp), and the dosage each subject received of the supplement(dose).  There were two possible supplements:  Orange Juice(OJ) and vitamin C tablets(VC).  The supplements were administered at dosages 0.5, 1.0, and 2.0.  The units on length and dosage are ambiguous, although mm would be sensible for length and g would be sensible for dosage.
+
+To test whether the identity of the supplement affects tooth growth, we use an unpaired t-test. The null hypothesis is that the identity of the supplement does not affect the amount of tooth growth (the difference in means is zero).  An unpaired, two=sided t-test indicates we cannot reject the null hypothesis at a 95% confidence level, as the 95% confidence interval contains zero.
+```{r}
+withOJ<-subset(ToothGrowth,ToothGrowth$supp=="OJ")
+withVC<-subset(ToothGrowth,ToothGrowth$supp=="VC")
+t.test(withOJ$len,withVC$len)$conf
+```
+
+Repeating the analysis and requesting the 90% confidence interval allows for the null hypothesis to be rejected, and orange juice (OJ) to be identified as the supplement with a stronger effect on tooth growth.
+```{r}
+t.test(withOJ$len,withVC$len, conf.level=0.9)$conf
+```
+
+We can also test to determine whether the dosage size is a factor in tooth growth.  We apply an unpaired, two-sided t-test to the difference in the means of tooth growth for the three dosage sizes, with a null hypothesis that the difference in the means is zero.  When using vitamin C as the supplement:
+```{r, echo=FALSE}
+withOJsmall<-subset(ToothGrowth, ToothGrowth$supp=="OJ" & ToothGrowth$dose==0.5)
+withOJmedium<-subset(ToothGrowth, ToothGrowth$supp=="OJ" & ToothGrowth$dose==1.0)
+withOJlarge<-subset(ToothGrowth, ToothGrowth$supp=="OJ" & ToothGrowth$dose==2.0)
+
+withVCsmall<-subset(ToothGrowth, ToothGrowth$supp=="VC" & ToothGrowth$dose==0.5)
+withVCmedium<-subset(ToothGrowth, ToothGrowth$supp=="VC" & ToothGrowth$dose==1.0)
+withVClarge<-subset(ToothGrowth, ToothGrowth$supp=="VC" & ToothGrowth$dose==2.0)
+
+bollocks1<-t.test(withVClarge$len,withVCmedium$len)$conf.int
+bollocks2<-t.test(withVClarge$len,withVCsmall$len)$conf.int
+bollocks3<-t.test(withVCmedium$len,withVCsmall$len)$conf.int
+
+dose_comp=matrix(nrow=3,ncol=2)
+dose_comp[1,1]<-round(bollocks1[1],2)
+dose_comp[1,2]<-round(bollocks1[2],2)
+dose_comp[2,1]<-round(bollocks2[1],2)
+dose_comp[2,2]<-round(bollocks2[2],2)
+dose_comp[3,1]<-round(bollocks3[1],2)
+dose_comp[3,2]<-round(bollocks3[2],2)
+rownames(dose_comp)<-c("2.0 - 1.0","2.0 - 0.5", "1.0 - 0.5")
+colnames(dose_comp)<-c("low range","high range")
+dose_comp
+```
+The null hypothesis may be rejected for all three possible comparisons.  The data support a conclusion that larger dose sizes of vitamin C caused more significant tooth growth.
+
+Repeating the comparison when using orange juice as the supplement:
+```{r, echo=FALSE}
+bollocks4<-t.test(withOJlarge$len,withOJmedium$len)$conf.int
+bollocks5<-t.test(withOJlarge$len,withOJsmall$len)$conf.int
+bollocks6<-t.test(withOJmedium$len,withOJsmall$len)$conf.int
+
+dose_compOJ=matrix(nrow=3,ncol=2)
+dose_compOJ[1,1]<-round(bollocks4[1],2)
+dose_compOJ[1,2]<-round(bollocks4[2],2)
+dose_compOJ[2,1]<-round(bollocks5[1],2)
+dose_compOJ[2,2]<-round(bollocks5[2],2)
+dose_compOJ[3,1]<-round(bollocks6[1],2)
+dose_compOJ[3,2]<-round(bollocks6[2],2)
+rownames(dose_compOJ)<-c("2.0 - 1.0","2.0 - 0.5", "1.0 - 0.5")
+colnames(dose_compOJ)<-c("low range","high range")
+dose_compOJ
+```
+Again, the null hypothesis is rejected for all three possible comparisons.  The data support a conclusion that larger dose sizes of orange juice caused more significant tooth growth.
+
+In performing the t-tests it was assumed that the data were unpaired and that the variance for the six separate populations (by supplement, dosage) were not equal.

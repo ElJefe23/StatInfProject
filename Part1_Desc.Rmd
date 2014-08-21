@@ -2,7 +2,7 @@
 title: "StatInfProject"
 author: "Jeff Wolbach"
 date: "Sunday, August 17, 2014"
-output: html_document
+output: pdf_document
 ---
 
 The exponential distribution was investigated by simulating 1500, 40-member samples from an exponential distribution with a mean of 5 and a variance of 5.  The mean of each 40-member sample was calculated and the behavior of the mean across all 1500 samples was compared to a normal distribution as a proof of the central limit theorem.

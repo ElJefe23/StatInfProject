@@ -29,6 +29,19 @@ t.test(withVClarge$len,withVCmedium$len)
 ## I suppose this will be best displayed by a table, and I could try to extract
 ## the relevant information from the function call. $conf returns a 2-element vector,
 ## along with some text ... check the lecture notes.
-
-## By the way, the knitr lecture is pure bollocks.  However, directed play is learning, so 
-## Caffo pulled a Homer on this one.
+bollocks1<-t.test(withVClarge$len,withVCmedium$len)$conf.int
+bollocks2<-t.test(withVClarge$len,withVCsmall$len)$conf.int
+bollocks3<-t.test(withVCmedium$len,withVCsmall$len)$conf.int
+##and then bollocks[1], bollocks[2] for the win!
+dose_comp=matrix(nrow=3,ncol=2)
+## This is tedious, but ...
+dose_comp[1,1]<-round(bollocks1[1],3)
+dose_comp[1,2]<-round(bollocks1[2],3)
+dose_comp[2,1]<-round(bollocks2[1],3)
+dose_comp[2,2]<-round(bollocks2[2],3)
+dose_comp[3,1]<-round(bollocks3[1],3)
+dose_comp[3,2]<-round(bollocks3[2],3)
+rownames(dose_comp)<-c("High - Medium","High - Low", "Medium - Low")
+colnames(dose_comp)<-c("low range","high range")
+## The big reveal
+dose_comp
