@@ -2,7 +2,7 @@
 title: "StatInfProject"
 author: "Jeff Wolbach"
 date: "Sunday, August 17, 2014"
-output: html_document
+output: pdf_document
 ---
 
 The exponential distribution was investigated by simulating 1500, 40-member samples from an exponential distribution with a mean of 5 and a variance of 5.  The mean of each 40-member sample was calculated and the behavior of the mean across all 1500 samples was compared to a normal distribution as a proof of the central limit theorem.
@@ -35,7 +35,7 @@ for (j in 1:5) {
 ```
 
 
-Where the first column of norm_comp represents values below the average of the sample means (to the left), and the second column represents values above the average of the sample means (to the right).  For a normal distribution the two elements of each row should be equal, or the distribution should be symmetric about the center.
+Where the first column of norm_comp represents the fraction of values below the average of the sample means (to the left), and the second column represents the fraction of values above the average of the sample means (to the right).  For a normal distribution the two elements of each row should be equal, or the distribution should be symmetric about the center.
 ```{r, echo=FALSE}
 colnames(norm_comp)<-c("Left of Mean","Right of Mean")
 rownames(norm_comp)<-c("0.5 sigma", "1.0 sigma", "1.5 sigma", "2.0 sigma", "2.5 sigma")
